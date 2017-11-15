@@ -1,0 +1,41 @@
+Sub KeepOnlyBibNumber()
+    Dim ws As Worksheet
+    Dim rng As range
+    Dim lastRow As Long
+    Dim sht As Worksheet
+    Dim fnd As Variant
+    Dim rplc As Variant
+    Dim fnd1 As Variant
+    Dim replceb As Variant
+    Dim vData
+    Dim n As Long
+    Dim sht2 As Worksheet
+
+
+    Set ws = ActiveWorkbook.Sheets("Sheet1")
+    lastRow = ws.range("A" & ws.Rows.Count).End(xlUp).Row
+    Set rng = ws.range("A1:A" & lastRow)
+    With rng
+        .AutoFilter Field:=1, Criteria1:="<>*OVERLAY*"
+        .Offset(0, 0).SpecialCells(xlCellTypeVisible).EntireRow.Delete
+        
+    End With
+    
+    ws.AutoFilterMode = False
+    fnd = "*OVERLAY b"
+    rplc = "b"
+    
+    For Each sht In ActiveWorkbook.Worksheets
+        sht.Cells.Replace What:=fnd, Replacement:=rplc, _
+        LookAt:=xlPart, SearchOrder:=xlByRows, MatchCase:=False, _
+        SearchFormat:=False, ReplaceFormat:=False
+    Next sht
+
+    
+    vData = range("A1:A500").Value
+    For n = 1 To UBound(vData, 1)
+    If Len(vData(n, 1)) <> 0 Then vData(n, 1) = Left$(vData(n, 1), Len(vData(n, 1)) - 1)
+    Next n
+    range("A1:A500").Value = vData
+    
+End Sub
